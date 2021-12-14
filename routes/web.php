@@ -117,3 +117,4 @@ Route::group(['prefix' => 'user','middleware' =>['auth','user'],'namespace' => '
 Route::get('/',[IndexController::class,'index']);
 Route::get('language/english',[LanguageController::class,'english'])->name('english.language');
 Route::get('language/bangla',[LanguageController::class,'bangla'])->name('bangla.language');
+Route::get('single_product/{id}/{slug}',[IndexController::class,'single_product']);
