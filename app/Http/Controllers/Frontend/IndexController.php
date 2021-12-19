@@ -38,4 +38,10 @@ class IndexController extends Controller
         $hot_deals=Product::where('hot_deals',1)->where('status',1)->get();
         return view('frontend.product_detail',compact('product','hot_deals'));
     }
+
+    public function tag_product($tag){
+       $product=Product::where('status',1)->where('product_tags_en','like', '%' . $tag . '%')->orWhere('product_tags_bn','like', '%' . $tag . '%')->get();
+      
+       return view('frontend.tag_wise_product',compact('product','tag'));
+       }
 }

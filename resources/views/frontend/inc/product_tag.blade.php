@@ -4,11 +4,11 @@
 		<div class="tag-list">	
 		@if(session()->get('language')=='english')
 		  @foreach($final_tag_en_arr as $item)
-          <a class="item active" title="Phone" href="category.html">{{$item}}</a>
+          <a class="item active" title="Phone" href="{{route('tag.product',$item)}}">{{$item}}</a>
           @endforeach
 		@else
 		 @foreach($final_tag_bn_arr as $item)
-          <a class="item active" title="Phone" href="category.html">{{$item}}</a>
+          <a class="item active" title="Phone" href="{{route('tag.product',$item)}}">{{$item}}</a>
           @endforeach
 		@endif				
 			
