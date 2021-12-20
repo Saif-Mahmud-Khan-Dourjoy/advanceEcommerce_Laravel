@@ -40,8 +40,27 @@ class IndexController extends Controller
     }
 
     public function tag_product($tag){
-       $product=Product::where('status',1)->where('product_tags_en','like', '%' . $tag . '%')->orWhere('product_tags_bn','like', '%' . $tag . '%')->get();
+       // $product=Product::where('status',1)->where('product_tags_en','like', '%' . $tag . '%')->orWhere('product_tags_bn','like', '%' . $tag . '%')->paginate(1);
+       $products=Product::where('status',1)->where('product_tags_en','like', '%' . $tag . '%')->orWhere('product_tags_bn','like', '%' . $tag . '%')->paginate(1);
+
+       $pro=Product::where('status',1)->get();
+        $final_tag_en=[];
+        $final_tag_bn=[];
+        foreach($pro as $pro){
+            $tags_en=$pro->product_tags_en;
+            $tags_bn=$pro->product_tags_bn;
+            $tags_en_arr=explode(",",$tags_en);
+            $tags_bn_arr=explode(",",$tags_bn);
+            array_push($final_tag_en,...$tags_en_arr);
+            array_push($final_tag_bn,...$tags_bn_arr);
+            
+            
+        }
       
-       return view('frontend.tag_wise_product',compact('product','tag'));
+        $final_tag_en_arr=array_unique($final_tag_en);
+      
+        $final_tag_bn_arr=array_unique($final_tag_bn);
+      
+       return view('frontend.tag_wise_product',compact('products','tag','final_tag_en_arr','final_tag_bn_arr'));
        }
 }
