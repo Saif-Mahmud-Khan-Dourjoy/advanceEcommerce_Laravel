@@ -18,7 +18,7 @@ function bn_price($rep){
 		<div class="breadcrumb-inner">
 			<ul class="list-inline list-unstyled">
 				<li><a href="#">Home</a></li>
-				<li class='active'>{{$tag}}</li>
+				<li class='active'>Category</li>
 			</ul>
 		</div><!-- /.breadcrumb-inner -->
 	</div><!-- /.container -->

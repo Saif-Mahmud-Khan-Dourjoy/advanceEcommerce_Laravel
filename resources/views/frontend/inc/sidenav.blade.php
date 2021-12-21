@@ -18,17 +18,17 @@
 											@endphp
 											@foreach($sub_category as $s_cat)
 											<div class="col-sm-12 col-md-3">
-												<h2 class="title">@if(session()->get('language')=='english'){{$s_cat->sub_category_name_en}}
+												<a href="{{route('sub.category.product',$s_cat->id)}}"><h2 class="title">@if(session()->get('language')=='english'){{$s_cat->sub_category_name_en}}
 													@else
 													{{$s_cat->sub_category_name_bn}}
 													@endif
-												</h2>
+												</h2></a>
 												<ul class="links list-unstyled">
 													@php                                        
 													$sub_sub_category=App\Models\SubSubCategory::where('sub_category_id',$s_cat->id)->latest()->get(); 
 													@endphp
 													@foreach($sub_sub_category as $s_s_cat)  
-													<li><a href="#">@if(session()->get('language')=='english'){{$s_s_cat->sub_sub_category_name_en}}
+													<li><a href="{{route('sub.sub.category.product',$s_s_cat->id)}}">@if(session()->get('language')=='english'){{$s_s_cat->sub_sub_category_name_en}}
 														@else
 														{{$s_s_cat->sub_sub_category_name_bn}}
 													@endif</a></li>

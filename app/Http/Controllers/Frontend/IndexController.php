@@ -35,8 +35,20 @@ class IndexController extends Controller
     }
     public function single_product($id,$slug){
         $product=Product::findOrFail($id);
+        $color_en=$product->product_color_en;
+        $product_color_en=explode(',',$color_en);
+
+        $color_bn=$product->product_color_bn;
+        $product_color_bn=explode(',',$color_bn);
+
+        $size_en=$product->product_size_en;
+        $product_size_en=explode(',',$size_en);
+
+        $size_bn=$product->product_size_bn;
+        $product_size_bn=explode(',',$size_bn);
+
         $hot_deals=Product::where('hot_deals',1)->where('status',1)->get();
-        return view('frontend.product_detail',compact('product','hot_deals'));
+        return view('frontend.product_detail',compact('product','hot_deals','product_color_en','product_color_bn','product_size_en','product_size_bn'));
     }
 
     public function tag_product($tag){
@@ -62,5 +74,83 @@ class IndexController extends Controller
         $final_tag_bn_arr=array_unique($final_tag_bn);
       
        return view('frontend.tag_wise_product',compact('products','tag','final_tag_en_arr','final_tag_bn_arr'));
+       }
+
+       // public function category_product($id){
+
+       //  $products=Product::where('status',1)->where('category_id',$id)->paginate(1);
+
+       // $pro=Product::where('status',1)->get();
+       //  $final_tag_en=[];
+       //  $final_tag_bn=[];
+       //  foreach($pro as $pro){
+       //      $tags_en=$pro->product_tags_en;
+       //      $tags_bn=$pro->product_tags_bn;
+       //      $tags_en_arr=explode(",",$tags_en);
+       //      $tags_bn_arr=explode(",",$tags_bn);
+       //      array_push($final_tag_en,...$tags_en_arr);
+       //      array_push($final_tag_bn,...$tags_bn_arr);
+            
+            
+       //  }
+      
+       //  $final_tag_en_arr=array_unique($final_tag_en);
+      
+       //  $final_tag_bn_arr=array_unique($final_tag_bn);
+      
+       // return view('frontend.category_product',compact('products','final_tag_en_arr','final_tag_bn_arr'));
+
+       // }
+
+       public function sub_category_product($id){
+
+        $products=Product::where('status',1)->where('sub_category_id',$id)->paginate(1);
+
+       $pro=Product::where('status',1)->get();
+        $final_tag_en=[];
+        $final_tag_bn=[];
+        foreach($pro as $pro){
+            $tags_en=$pro->product_tags_en;
+            $tags_bn=$pro->product_tags_bn;
+            $tags_en_arr=explode(",",$tags_en);
+            $tags_bn_arr=explode(",",$tags_bn);
+            array_push($final_tag_en,...$tags_en_arr);
+            array_push($final_tag_bn,...$tags_bn_arr);
+            
+            
+        }
+      
+        $final_tag_en_arr=array_unique($final_tag_en);
+      
+        $final_tag_bn_arr=array_unique($final_tag_bn);
+      
+       return view('frontend.sub_category_product',compact('products','final_tag_en_arr','final_tag_bn_arr'));
+
+       }
+
+       public function sub_sub_category_product($id){
+
+        $products=Product::where('status',1)->where('sub_sub_category_id',$id)->paginate(1);
+
+       $pro=Product::where('status',1)->get();
+        $final_tag_en=[];
+        $final_tag_bn=[];
+        foreach($pro as $pro){
+            $tags_en=$pro->product_tags_en;
+            $tags_bn=$pro->product_tags_bn;
+            $tags_en_arr=explode(",",$tags_en);
+            $tags_bn_arr=explode(",",$tags_bn);
+            array_push($final_tag_en,...$tags_en_arr);
+            array_push($final_tag_bn,...$tags_bn_arr);
+            
+            
+        }
+      
+        $final_tag_en_arr=array_unique($final_tag_en);
+      
+        $final_tag_bn_arr=array_unique($final_tag_bn);
+      
+       return view('frontend.sub_sub_category_product',compact('products','final_tag_en_arr','final_tag_bn_arr'));
+
        }
 }

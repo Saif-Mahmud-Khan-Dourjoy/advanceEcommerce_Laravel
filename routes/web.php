@@ -119,3 +119,6 @@ Route::get('language/english',[LanguageController::class,'english'])->name('engl
 Route::get('language/bangla',[LanguageController::class,'bangla'])->name('bangla.language');
 Route::get('single_product/{id}/{slug}',[IndexController::class,'single_product']);
 Route::get('tag_product/{tag}',[IndexController::class,'tag_product'])->name('tag.product');
+// Route::get('category_product/{id}',[IndexController::class,'category_product'])->name('category.product');
+Route::get('sub_category_product/{id}',[IndexController::class,'sub_category_product'])->name('sub.category.product');
+Route::get('sub_sub_category_product/{id}',[IndexController::class,'sub_sub_category_product'])->name('sub.sub.category.product');
