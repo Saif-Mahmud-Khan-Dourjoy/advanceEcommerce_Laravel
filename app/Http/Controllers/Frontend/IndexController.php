@@ -48,7 +48,12 @@ class IndexController extends Controller
         $product_size_bn=explode(',',$size_bn);
 
         $hot_deals=Product::where('hot_deals',1)->where('status',1)->get();
-        return view('frontend.product_detail',compact('product','hot_deals','product_color_en','product_color_bn','product_size_en','product_size_bn'));
+
+        $category=$product->category_id;
+
+        $related_product=Product::where('category_id',$category)->where('id','!=',$id)->where('status',1)->get();
+
+        return view('frontend.product_detail',compact('product','hot_deals','product_color_en','product_color_bn','product_size_en','product_size_bn','related_product'));
     }
 
     public function tag_product($tag){
