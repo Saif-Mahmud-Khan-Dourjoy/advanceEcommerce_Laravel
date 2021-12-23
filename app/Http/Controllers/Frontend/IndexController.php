@@ -158,4 +158,22 @@ class IndexController extends Controller
        return view('frontend.sub_sub_category_product',compact('products','final_tag_en_arr','final_tag_bn_arr'));
 
        }
+
+        public function product_details_addTocart($id)
+       {
+          $product=Product::with('brand','category')->findOrFail($id);
+          $color_en=explode(',',$product->product_color_en);
+          $color_bn=explode(',',$product->product_color_bn);
+          $size_en=explode(',',$product->product_size_en);
+          $size_bn=explode(',',$product->product_size_bn);
+           return response()->json([
+            'product'=>$product,
+            'color_en'=>$color_en,
+            'color_bn'=>$color_bn,
+            'size_en'=>$size_en,
+            'size_bn'=>$size_bn,
+
+
+           ]);
+       }
 }

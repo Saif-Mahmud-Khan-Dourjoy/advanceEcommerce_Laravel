@@ -122,3 +122,4 @@ Route::get('tag_product/{tag}',[IndexController::class,'tag_product'])->name('ta
 // Route::get('category_product/{id}',[IndexController::class,'category_product'])->name('category.product');
 Route::get('sub_category_product/{id}',[IndexController::class,'sub_category_product'])->name('sub.category.product');
 Route::get('sub_sub_category_product/{id}',[IndexController::class,'sub_sub_category_product'])->name('sub.sub.category.product');
+Route::get('product/details/addTocart/{id}',[IndexController::class,'product_details_addTocart']);

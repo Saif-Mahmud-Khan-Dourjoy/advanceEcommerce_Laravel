@@ -7,6 +7,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 	<meta name="description" content="">
+	<meta name="csrf-token" content="{{ csrf_token() }}" />
 	<meta name="author" content="">
 	<meta name="keywords" content="MediaCenter, Template, eCommerce">
 	<meta name="robots" content="all">
@@ -41,6 +42,10 @@
 
 </head>
 <body class="cnt-home">
+	
+
+
+	@endphp
 	<!-- ============================================== HEADER ============================================== -->
 	<header class="header-style-1">
 
@@ -136,13 +141,13 @@
 
 											<ul class="dropdown-menu" role="menu" >
 												@php                                        
-											$category=App\Models\Category::latest()->get();                         @endphp
-											@foreach($category as $cat)
+												$category=App\Models\Category::latest()->get();                         @endphp
+												@foreach($category as $cat)
 												<li role="presentation"><a role="menuitem" tabindex="-1" href="category.html">@if(session()->get('language')=='english')-{{$cat->category_name_en}}
 													@else
 													-{{$cat->category_name_bn}}
-													@endif</a></li>
-											@endforeach	
+												@endif</a></li>
+												@endforeach	
 
 											</ul>
 										</li>
@@ -267,14 +272,14 @@
 																	</h2>
 																	<ul class="links">
 																		@php                                        
-																$sub_sub_category=App\Models\SubSubCategory::where('sub_category_id',$s_cat->id)->latest()->get(); 
-																@endphp
-																@foreach($sub_sub_category as $s_s_cat)
+																		$sub_sub_category=App\Models\SubSubCategory::where('sub_category_id',$s_cat->id)->latest()->get(); 
+																		@endphp
+																		@foreach($sub_sub_category as $s_s_cat)
 																		<li><a href="#">@if(session()->get('language')=='english'){{$s_s_cat->sub_sub_category_name_en}}
-																		@else
-																		{{$s_s_cat->sub_sub_category_name_bn}}
+																			@else
+																			{{$s_s_cat->sub_sub_category_name_bn}}
 																		@endif</a></li>
-																@endforeach		
+																		@endforeach		
 
 																	</ul>
 																</div><!-- /.col -->
@@ -526,6 +531,57 @@
 			</div>
 		</div>
 	</footer>
+	<div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="proName"></h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-md-4">
+                          <img src="" class="img-fluid" id="proImg" height="200px" width="200px">
+						</div>
+						<div class="col-md-4">
+							<ul class="list-group">
+								<li class="list-group-item" >Price : <strong class="text-danger"> <span id="proPrice"></span> </strong>  <span><del id="prePrice"></del></span></li>
+								<li class="list-group-item" >Code : <span id="proCode"></span></li>
+								<li class="list-group-item" >Brand : <span id="proBrand"></span></li>
+								<li class="list-group-item" >Category : <span id="proCategory"></span></li>
+								<li class="list-group-item">Stock : <span class="text-success" id="proStock"> </span> <span id="proNotStock" class="text-danger"> </span> </li>
+							</ul>
+						</div>
+						<div class="col-md-4">
+							<label>Select Color :</label> <br>
+							<select class="form-control" id="proColor" name="color">
+								
+								
+							</select>
+							<br>
+							<div id="showSize">
+							<label>Select Size :</label> <br>
+							<select class="form-control" id="proSize" name="size">
+								
+							</select>
+							</div>
+							<br>
+							<label>Quantity :</label> <br>
+							<input class="form-control" type="number" name="qty" value="1">
+							<br>
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+							<button type="submit" class="btn btn-info">Add To Cart</button>
+
+
+						</div>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
 	<!-- ============================================================= FOOTER : END============================================================= -->
 
 
@@ -572,6 +628,112 @@
 			break;
 		}
 		@endif
+	</script>
+
+	<script type="text/javascript">
+		function getID(id) {
+			$.ajaxSetup({
+				headers: {
+					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				}
+			});
+
+			$.ajax({
+				type: "GET",
+				url: "product/details/addTocart/"+id,
+				dataType: 'json',
+
+				success: function(data){
+                     
+                     $('#proCode').text(data.product.product_code);
+                     $('#proImg').attr('src',data.product.product_thumbnail);
+
+                     if(data.product.product_qty > 0){
+                      $('#proStock').text('Available');
+                     }
+                     else{
+                     $('#proNotStock').text('Out Of Stock');
+                     }
+                     
+
+					
+					var session='<?php echo session()->get('language');?>';
+
+					if(session=='english'){
+
+						$('#proName').text(data.product.product_name_en);
+						$('#proBrand').text(data.product.brand.brand_name_en);
+						$('#proCategory').text(data.product.category.category_name_en);
+
+						$.each(data.color_en,function(key,value){
+                           $('#proColor').append('<option value="'+value+'">'+value+'</option>');
+						});
+
+						 if(data.size_en == null){
+                        	$('#showSize').hide();
+                        }
+                        else{
+                        	$.each(data.size_en,function(key,value){
+                           $('select[name="size"]').append('<option value="'+value+'">'+value+'</option>');
+						});
+                        }
+
+						if(data.product.discount_price == null ){
+                          $('#proPrice').text('');
+                          $('#prePrice').text('');
+                          $('#proPrice').text('$'+data.product.selling_price);
+						}
+						else{
+							$('#proPrice').text('');
+                          $('#prePrice').text('');
+                          $('#proPrice').text('$'+data.product.discount_price);
+                          $('#prePrice').text('$'+data.product.selling_price);
+
+						}
+
+						
+					}else{
+						$('#proName').text(data.product.product_name_bn);
+						$('#proBrand').text(data.product.brand.brand_name_bn);
+						$('#proCategory').text(data.product.category.category_name_bn);
+
+						$.each(data.color_bn,function(key,value){
+                           $('#proColor').append('<option value="'+value+'">'+value+'</option>');
+						});
+                        if(data.size_bn == null){
+                        	$('#showSize').hide();
+                        }
+                        else{
+                        	$.each(data.size_bn,function(key,value){
+                           $('select[name="size"]').append('<option value="'+value+'">'+value+'</option>');
+						});
+                        }
+						
+
+						if(data.product.discount_price == null ){
+                          $('#proPrice').text('');
+                          $('#prePrice').text('');
+                          $('#proPrice').text('$'+bn_price(data.product.selling_price));
+						}
+						else{
+							$('#proPrice').text('');
+                          $('#prePrice').text('');
+                          $('#proPrice').text('$'+bn_price(data.product.discount_price));
+                          $('#prePrice').text('$'+bn_price(data.product.selling_price));
+
+						}
+
+                     
+					}
+
+				},
+				error: function (error) {
+
+				}
+			});
+
+
+		}
 	</script>
 
 
