@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Frontend\IndexController;
 use App\Http\Controllers\Frontend\LanguageController;
+use App\Http\Controllers\User\CartController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -122,4 +123,14 @@ Route::get('tag_product/{tag}',[IndexController::class,'tag_product'])->name('ta
 // Route::get('category_product/{id}',[IndexController::class,'category_product'])->name('category.product');
 Route::get('sub_category_product/{id}',[IndexController::class,'sub_category_product'])->name('sub.category.product');
 Route::get('sub_sub_category_product/{id}',[IndexController::class,'sub_sub_category_product'])->name('sub.sub.category.product');
+//=====Cart=====//
 Route::get('product/details/addTocart/{id}',[IndexController::class,'product_details_addTocart']);
+Route::post('cart/data/store/{id}',[CartController::class,'addTocart']);
+
+
+
+
+
+
+
+

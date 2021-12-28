@@ -536,7 +536,7 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<h5 class="modal-title" id="proName"></h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<button type="button" class="close" data-dismiss="modal" id="closeModal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
 					</div>
@@ -568,11 +568,13 @@
 									</select>
 								</div>
 								<br>
+								<input type="hidden" id="product_id" name="product_id">
+								{{-- <input type="hidden" id="product_name" name="product_name"> --}}
 								<label>Quantity :</label> <br>
-								<input class="form-control" type="number" name="qty" value="1">
+								<input class="form-control" type="number" id="qty" name="qty" value="1">
 								<br>
 								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-								<button type="submit" class="btn btn-info">Add To Cart</button>
+								<button type="button" onclick="addToCart()" class="btn btn-info">Add To Cart</button>
 
 
 							</div>
@@ -607,6 +609,7 @@
 		<script src="{{asset('frontend')}}/assets/js/wow.min.js"></script>
 		<script src="{{asset('frontend')}}/assets/js/scripts.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.all.min.js"></script>
 		<script>
 			@if(Session::has('message'))
 			var type = "{{ Session::get('alert-type', 'info') }}";
@@ -631,12 +634,13 @@
 		</script>
 
 		<script type="text/javascript">
+			$.ajaxSetup({
+				headers: {
+					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				}
+			});
 			function getID(id) {
-				$.ajaxSetup({
-					headers: {
-						'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-					}
-				});
+
 
 				$.ajax({
 					type: "GET",
@@ -647,11 +651,15 @@
 
 						
 						$('#proImg').attr('src',data.product.product_thumbnail);
+						$('#product_id').val(id);
+
 
 						if(data.product.product_qty > 0){
+							$('#proNotStock').text('');
 							$('#proStock').text('Available');
 						}
 						else{
+							$('#proStock').text('');
 							$('#proNotStock').text('Out Of Stock');
 						}
 
@@ -660,7 +668,7 @@
 						var session='<?php echo session()->get('language');?>';
 
 						if(session=='english'){
-                            $('#proCode').text(data.product.product_code);
+							$('#proCode').text(data.product.product_code);
 							$('#proName').text(data.product.product_name_en);
 							$('#proBrand').text(data.product.brand.brand_name_en);
 							$('#proCategory').text(data.product.category.category_name_en);
@@ -674,6 +682,7 @@
 							}
 							else{
 								$('#showSize').show();
+								$('select[name="size"]').text('');
 								$.each(data.size_en,function(key,value){
 									$('select[name="size"]').append('<option value="'+value+'">'+value+'</option>');
 								});
@@ -707,6 +716,7 @@
 							}
 							else{
 								$('#showSize').show();
+								$('select[name="size"]').text('');
 								$.each(data.size_bn,function(key,value){
 									$('select[name="size"]').append('<option value="'+value+'">'+value+'</option>');
 								});
@@ -754,21 +764,115 @@
 								$('#prePrice').text('$'+bn_number(data.product.selling_price));
 
 							}
-					
+
+
+						}
+
+					},
+					error: function (error) {
 
 					}
-
-				},
-				error: function (error) {
-
-				}
-			});
+				});
 
 
 			}
-		</script>
+
+			
+			function addToCart(){
 
 
-	</body>
+				var product_id=$('#product_id').val();
+				var color= $('#proColor option:selected').text();
+				var size= $('#proColor option:selected').text();
+				var proName= $('#proName').text();
+				var qty= $('#qty').val();
 
-	</html>
+
+
+				
+
+				$.ajax({
+					type: "POST",
+					dataType: 'json',
+					data:{
+						color:color,
+						size:size,
+						proName:proName,
+						qty:qty
+					},
+					url: "cart/data/store/"+product_id,
+
+					success:function(data){
+						$('#closeModal').click();
+						Swal.fire({
+							position: 'top-end',
+							icon: 'success',
+							title: 'Successfully Added',
+							showConfirmButton: false,
+							timer: 1500
+						})
+
+
+					},
+					error:function(error){
+
+					}
+
+				});
+
+
+				
+			}
+
+
+
+			// var response = $.ajax(
+			// 	{   type: 'GET',
+			// 	data: data,
+			// 	url: serverurl
+			// }
+			// );
+
+			// console.log(response);
+
+			// var domainname = 'http://e-learning.dpg.gov.bd/moodle'; 
+			// var token = 'df337369637c692303d903f8cacf1eb0'; 
+			// var functionname = 'core_course_get_contents'; 
+			// var serverurl = domainname + '/webservice/rest/server.php' ; 
+			// var data = {
+			// 	wstoken: token,
+			// 	wsfunction: functionname,
+			// 	moodlewsrestformat: 'json' ,
+   //          // courseid: 2 //Retrieve results based on course Id 2            
+   //      }
+   //      $.ajax({
+   //      	method: 'GET',
+   //      	crossDomain: true,
+   //      	crossOrigin: true,
+   //      	data: data,
+   //      	// headers: {
+   //      	// 	'Access-Control-Allow-Methods': '*',
+   //      	// 	"Access-Control-Allow-Credentials": true,
+   //      	// 	"Access-Control-Allow-Headers" : "Access-Control-Allow-Headers, Origin, X-Requested-With, Content-Type, Accept, Authorization",
+   //      	// 	"Access-Control-Allow-Origin": "*",
+   //      	// 	"Control-Allow-Origin": "*",
+   //      	// 	"cache-control": "no-cache",
+   //      	// 	'Content-Type': 'application/json'
+   //      	// },
+   //      	url: serverurl,
+   //      	success: function(response){
+   //           console.log(response);
+   //      	},
+   //      	error: function (error) {
+        		
+   //      	}
+   //      });
+
+    </script>
+
+
+
+
+</body>
+
+</html>
