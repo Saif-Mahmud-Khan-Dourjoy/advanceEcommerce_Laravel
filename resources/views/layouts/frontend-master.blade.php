@@ -166,7 +166,7 @@
 								<!-- ============================================================= SHOPPING CART DROPDOWN ============================================================= -->
 
 								<div class="dropdown dropdown-cart">
-									<a href="#" class="dropdown-toggle lnk-cart" data-toggle="dropdown">
+									<a href="#" class="dropdown-toggle lnk-cart miniCart" data-toggle="dropdown">
 										<div class="items-cart-inner">
 											<div class="basket">
 												<i class="glyphicon glyphicon-shopping-cart"></i>
@@ -184,25 +184,11 @@
 									</a>
 									<ul class="dropdown-menu">
 										<li>
-											<div class="cart-item product-summary">
-												<div class="row">
-													<div class="col-xs-4">
-														<div class="image">
-															<a href="detail.html"><img src="{{asset('frontend')}}/assets/images/cart.jpg" alt=""></a>
-														</div>
-													</div>
-													<div class="col-xs-7">
-
-														<h3 class="name"><a href="index8a95.html?page-detail">Simple Product</a></h3>
-														<div class="price">$600.00</div>
-													</div>
-													<div class="col-xs-1 action">
-														<a href="#"><i class="fa fa-trash"></i></a>
-													</div>
-												</div>
+											<div class="cart-item product-summary" id="miniCartContent">
+											
 											</div><!-- /.cart-item -->
 											<div class="clearfix"></div>
-											<hr>
+											
 
 											<div class="clearfix cart-total">
 												<div class="pull-right">
@@ -804,13 +790,24 @@
 
 					success:function(data){
 						$('#closeModal').click();
-						Swal.fire({
+						if(data=='success'){
+							Swal.fire({
 							position: 'top-end',
 							icon: 'success',
 							title: 'Successfully Added',
 							showConfirmButton: false,
 							timer: 1500
 						})
+						}else{
+							Swal.fire({
+							position: 'top-end',
+							icon: 'error',
+							title: 'Please Login First',
+							showConfirmButton: false,
+							timer: 1500
+						})
+						}
+						
 
 
 					},
@@ -826,47 +823,36 @@
 
 
 
-			// var response = $.ajax(
-			// 	{   type: 'GET',
-			// 	data: data,
-			// 	url: serverurl
-			// }
-			// );
+			
 
-			// console.log(response);
+   function miniCart(){
+      
+      	$.ajax({
+					type: "GET",
+					dataType: 'json',
+					url: "cart/data/read",
 
-			// var domainname = 'http://e-learning.dpg.gov.bd/moodle'; 
-			// var token = 'df337369637c692303d903f8cacf1eb0'; 
-			// var functionname = 'core_course_get_contents'; 
-			// var serverurl = domainname + '/webservice/rest/server.php' ; 
-			// var data = {
-			// 	wstoken: token,
-			// 	wsfunction: functionname,
-			// 	moodlewsrestformat: 'json' ,
-   //          // courseid: 2 //Retrieve results based on course Id 2            
-   //      }
-   //      $.ajax({
-   //      	method: 'GET',
-   //      	crossDomain: true,
-   //      	crossOrigin: true,
-   //      	data: data,
-   //      	// headers: {
-   //      	// 	'Access-Control-Allow-Methods': '*',
-   //      	// 	"Access-Control-Allow-Credentials": true,
-   //      	// 	"Access-Control-Allow-Headers" : "Access-Control-Allow-Headers, Origin, X-Requested-With, Content-Type, Accept, Authorization",
-   //      	// 	"Access-Control-Allow-Origin": "*",
-   //      	// 	"Control-Allow-Origin": "*",
-   //      	// 	"cache-control": "no-cache",
-   //      	// 	'Content-Type': 'application/json'
-   //      	// },
-   //      	url: serverurl,
-   //      	success: function(response){
-   //           console.log(response);
-   //      	},
-   //      	error: function (error) {
-        		
-   //      	}
-   //      });
+					success:function(data){
+						var output="";
+						 $.each(data.cartContent,function(index,value){
+                          
+                          output +=`<div class="row"><div class="col-xs-4"><div class="image"><a href="#"><img src="${value.options.image}" alt=""></a></div></div><div class="col-xs-7"><h3 class="name"><a href="#">${value.name}</a></h3><div class="price">${value.price}$</div></div><div class="col-xs-1 action"><a href="#"><i class="fa fa-trash"></i></a></div></div><hr>`;
+
+
+						 });
+						
+						$('#miniCartContent').html(output);
+                         
+
+					},
+					error:function(error){
+
+					}
+
+				});
+
+   }
+   miniCart();
 
     </script>
 

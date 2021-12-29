@@ -126,6 +126,7 @@ Route::get('sub_sub_category_product/{id}',[IndexController::class,'sub_sub_cate
 //=====Cart=====//
 Route::get('product/details/addTocart/{id}',[IndexController::class,'product_details_addTocart']);
 Route::post('cart/data/store/{id}',[CartController::class,'addTocart']);
+Route::get('cart/data/read',[CartController::class,'data_read']);
 
 
 
