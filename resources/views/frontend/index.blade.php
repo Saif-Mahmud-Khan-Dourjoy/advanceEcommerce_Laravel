@@ -834,11 +834,14 @@ function bn_price($rep){
 
 													</li>
 
-													<li class="lnk wishlist">
-														<a class="add-to-cart" href="detail.html" title="Wishlist">
+													{{-- <li class="lnk wishlist"> --}}
+														{{-- <a class="add-to-cart" href="detail.html" title="Wishlist">
 															<i class="icon fa fa-heart"></i>
-														</a>
-													</li>
+														</a> --}}
+														<button class="btn btn-danger icon" title="Wishlist" type="button" id="{{$product->id}}" onclick="addToWishList(this.id)">
+															<i class="icon fa fa-heart"></i>
+														</button>
+													{{-- </li> --}}
 
 													<li class="lnk">
 														<a class="add-to-cart" href="detail.html" title="Compare">

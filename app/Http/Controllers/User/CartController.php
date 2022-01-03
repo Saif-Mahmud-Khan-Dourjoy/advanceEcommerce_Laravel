@@ -25,7 +25,7 @@ class CartController extends Controller
 
         if($product->discount_price == NULL){
 
-         Cart::add([
+           Cart::add([
             'id' => $id, 
             'name' => $proName, 
             'qty' => $qty, 
@@ -39,9 +39,9 @@ class CartController extends Controller
         ]);
 
 
-     }
+       }
 
-     else{
+       else{
 
         Cart::add([
             'id' => $id, 
@@ -77,6 +77,47 @@ public function data_read(){
       'cartContent'=>$cartContent,
       'cartCount'=>$cartCount,
       'cartTotal'=>$cartTotal
-    ]);
+  ]);
+}
+
+public function my_cart_data_read(){
+    $cartContent=Cart::content();
+    $cartCount=Cart::count();
+    $cartTotal=Cart::total();
+    return response()->json([
+      'cartContent'=>$cartContent,
+      'cartCount'=>$cartCount,
+      'cartTotal'=>$cartTotal
+  ]);
+}
+public function data_remove($rowId){
+
+    Cart::remove($rowId);
+    return response()->json('success');
+}
+public function my_cart(){
+    return view('user.my_cart');
+}
+public function cart_item_increment($rowId){
+    $item=Cart::get($rowId);
+
+    Cart::update($rowId, $item->qty+1);
+
+    return response()->json('success');
+
+
+}
+public function cart_item_decrement($rowId){
+    $item=Cart::get($rowId);
+
+    if($item->qty==1){
+
+    }else{
+    Cart::update($rowId, $item->qty-1);
+
+    return response()->json('success');
+    }
+
+
 }
 }

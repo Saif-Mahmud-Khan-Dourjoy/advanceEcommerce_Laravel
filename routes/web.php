@@ -3,12 +3,15 @@
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ShippingAreaController;
 use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Frontend\IndexController;
 use App\Http\Controllers\Frontend\LanguageController;
 use App\Http\Controllers\User\CartController;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\User\WishlistController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -66,7 +69,7 @@ Route::group(['prefix' => 'admin','middleware' =>['auth','admin'],'namespace' =>
 
     Route::get('sub_sub_category/all',[CategoryController::class,'sub_sub_index'])->name('sub.sub.category');
     Route::post('add_sub_sub_category',[CategoryController::class,'add_sub_sub_category'])->name('add.sub.sub.category');
-     Route::get('edit_sub_sub_category/{id}',[CategoryController::class,'edit_sub_sub_category'])->name('edit.sub.sub.category');
+    Route::get('edit_sub_sub_category/{id}',[CategoryController::class,'edit_sub_sub_category'])->name('edit.sub.sub.category');
     Route::post('update_sub_sub_category',[CategoryController::class,'update_sub_sub_category'])->name('update.sub.sub.category');
     Route::get('delete_sub_sub_category/{id}',[CategoryController::class,'delete_sub_sub_category'])->name('delete.sub.sub.category');
     //====Finding Sub Category===//
@@ -96,10 +99,31 @@ Route::group(['prefix' => 'admin','middleware' =>['auth','admin'],'namespace' =>
     Route::get('edit_slider/{id}',[SliderController::class,'edit'])->name('edit.slider');
     Route::post('update_slider',[SliderController::class,'update_slider'])->name('update.slider');
     Route::get('delete_slider/{id}',[SliderController::class,'delete'])->name('delete.slider');
-     Route::get('slider/change_active_slider_status/{id}',[SliderController::class,'change_active_slider_status'])->name('active.slider.status');
+    Route::get('slider/change_active_slider_status/{id}',[SliderController::class,'change_active_slider_status'])->name('active.slider.status');
     Route::get('slider/change_inactive_slider_status/{id}',[SliderController::class,'change_inactive_slider_status'])->name('inactive.slider.status');
 
 
+///===========Coupon==========//////
+    Route::get('coupon',[CouponController::class,'index'])->name('coupon'); 
+    Route::post('add_coupon',[CouponController::class,'add_coupon'])->name('add.coupon');
+    Route::get('edit_coupon/{id}',[CouponController::class,'edit'])->name('edit.coupon');
+    Route::post('update_coupon',[CouponController::class,'update_coupon'])->name('update.coupon');
+    Route::get('delete_coupon/{id}',[CouponController::class,'delete'])->name('delete.coupon');
+
+///===========Shipping Area==========//////
+    Route::get('division',[ShippingAreaController::class,'add_division'])->name('division');
+    Route::post('add/division',[ShippingAreaController::class,'store_division'])->name('add.division');
+    Route::get('edit_division/{id}',[ShippingAreaController::class,'edit_division'])->name('edit.division');
+    Route::post('update_division',[ShippingAreaController::class,'update_division'])->name('update.division');
+    Route::get('delete_division/{id}',[ShippingAreaController::class,'delete_division'])->name('delete.division');
+
+
+    Route::get('district',[ShippingAreaController::class,'add_district'])->name('district');
+    Route::post('add/district',[ShippingAreaController::class,'store_district'])->name('add.district');
+     Route::get('edit_district/{id}',[ShippingAreaController::class,'edit_district'])->name('edit.district');
+     Route::post('update_district',[ShippingAreaController::class,'update_district'])->name('update.district');
+    Route::get('delete_district/{id}',[ShippingAreaController::class,'delete_district'])->name('delete.district');
+    Route::get('state',[ShippingAreaController::class,'add_state'])->name('state');
 });
 
 //============User============//
@@ -127,6 +151,16 @@ Route::get('sub_sub_category_product/{id}',[IndexController::class,'sub_sub_cate
 Route::get('product/details/addTocart/{id}',[IndexController::class,'product_details_addTocart']);
 Route::post('cart/data/store/{id}',[CartController::class,'addTocart']);
 Route::get('cart/data/read',[CartController::class,'data_read']);
+Route::get('my_cart/data/read',[CartController::class,'my_cart_data_read']);
+Route::get('cart/data/remove/{id}',[CartController::class,'data_remove']);
+Route::get('mycart',[CartController::class,'my_cart'])->name('my.cart');
+Route::get('cart/item/increment/{id}',[CartController::class,'cart_item_increment']);
+Route::get('cart/item/decrement/{id}',[CartController::class,'cart_item_decrement']);
+//===[wishlist]====//
+Route::get('wishlist/data/store/{id}',[WishlistController::class,'addToWishlist']);
+Route::get('wishlist',[WishlistController::class,'index'])->name('wishlist'); 
+Route::get('wishlist/data/read',[WishlistController::class,'data_read']);
+Route::get('wishlist/data/remove/{id}',[WishlistController::class,'data_remove']);
 
 
 

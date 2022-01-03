@@ -56,8 +56,8 @@
 					<div class="cnt-account">
 						<ul class="list-unstyled">
 							<li><a href="#"><i class="icon fa fa-user"></i>@if(session()->get('language')=='english') My Account @else আমার Account @endif </a></li>
-							<li><a href="#"><i class="icon fa fa-heart"></i>Wishlist</a></li>
-							<li><a href="#"><i class="icon fa fa-shopping-cart"></i>My Cart</a></li>
+							<li><a href="{{route('wishlist')}}"><i class="icon fa fa-heart"></i>Wishlist</a></li>
+							<li><a href="{{route('my.cart')}}"><i class="icon fa fa-shopping-cart"></i>My Cart</a></li>
 							<li><a href="#"><i class="icon fa fa-check"></i>Checkout</a></li>
 							@auth
 							<li><a href="
@@ -171,11 +171,11 @@
 											<div class="basket">
 												<i class="glyphicon glyphicon-shopping-cart"></i>
 											</div>
-											<div class="basket-item-count"><span class="count">2</span></div>
+											<div class="basket-item-count"><span class="count miniCartCount"></span></div>
 											<div class="total-price-basket">
 												<span class="lbl">cart -</span>
 												<span class="total-price">
-													<span class="sign">$</span><span class="value">600.00</span>
+													<span class="sign">$</span><span class="value mini_cart_total">600.00</span>
 												</span>
 											</div>
 
@@ -185,7 +185,7 @@
 									<ul class="dropdown-menu">
 										<li>
 											<div class="cart-item product-summary" id="miniCartContent">
-											
+
 											</div><!-- /.cart-item -->
 											<div class="clearfix"></div>
 											
@@ -193,7 +193,7 @@
 											<div class="clearfix cart-total">
 												<div class="pull-right">
 
-													<span class="text">Sub Total :</span><span class='price'>$600.00</span>
+													<span class="text">Sub Total :</span><span class='price miniCartTotal'></span>
 
 												</div>
 												<div class="clearfix"></div>
@@ -769,7 +769,7 @@
 
 				var product_id=$('#product_id').val();
 				var color= $('#proColor option:selected').text();
-				var size= $('#proColor option:selected').text();
+				var size= $('#proSize option:selected').text();
 				var proName= $('#proName').text();
 				var qty= $('#qty').val();
 
@@ -789,23 +789,24 @@
 					url: "cart/data/store/"+product_id,
 
 					success:function(data){
+						miniCart();
 						$('#closeModal').click();
 						if(data=='success'){
 							Swal.fire({
-							position: 'top-end',
-							icon: 'success',
-							title: 'Successfully Added',
-							showConfirmButton: false,
-							timer: 1500
-						})
+								position: 'top-end',
+								icon: 'success',
+								title: 'Successfully Added',
+								showConfirmButton: false,
+								timer: 1500
+							})
 						}else{
 							Swal.fire({
-							position: 'top-end',
-							icon: 'error',
-							title: 'Please Login First',
-							showConfirmButton: false,
-							timer: 1500
-						})
+								position: 'top-end',
+								icon: 'error',
+								title: 'Please Login First',
+								showConfirmButton: false,
+								timer: 1500
+							})
 						}
 						
 
@@ -825,24 +826,28 @@
 
 			
 
-   function miniCart(){
-      
-      	$.ajax({
+			function miniCart(){
+
+				$.ajax({
 					type: "GET",
 					dataType: 'json',
 					url: "cart/data/read",
 
 					success:function(data){
+						
 						var output="";
-						 $.each(data.cartContent,function(index,value){
-                          
-                          output +=`<div class="row"><div class="col-xs-4"><div class="image"><a href="#"><img src="${value.options.image}" alt=""></a></div></div><div class="col-xs-7"><h3 class="name"><a href="#">${value.name}</a></h3><div class="price">${value.price}$</div></div><div class="col-xs-1 action"><a href="#"><i class="fa fa-trash"></i></a></div></div><hr>`;
+						$.each(data.cartContent,function(index,value){
+
+							output +=`<div class="row"><div class="col-xs-4"><div class="image"><a href="#"><img src="${value.options.image}" alt=""></a></div></div><div class="col-xs-7"><h3 class="name"><a href="#">${value.name}</a></h3><div class="price">${value.price}$ * ${value.qty} </div></div><div class="col-xs-1 action"><button id="${value.rowId}" type="submit" onclick="miniCartRemoveItem(this.id)"><i class="fa fa-trash"></i></button></div></div><hr>`;
 
 
-						 });
+						});
 						
 						$('#miniCartContent').html(output);
-                         
+						$('.miniCartTotal').html('$'+data.cartTotal);
+						$('.miniCartCount').html(data.cartCount);
+						$('.mini_cart_total').html(data.cartTotal);
+
 
 					},
 					error:function(error){
@@ -851,14 +856,328 @@
 
 				});
 
-   }
-   miniCart();
+			}
+			miniCart();
 
-    </script>
+     /////======RemoveItemMiniCart======//////
+
+     function miniCartRemoveItem(rowId){
+
+     	$.ajax({
+     		type: "GET",
+     		dataType: 'json',
+     		url: "cart/data/remove/"+rowId,
+
+     		success:function(data){
+
+     			miniCart();
+     			my_cart();
+
+
+     			if(data=='success'){
+     				Swal.fire({
+     					position: 'top-end',
+     					icon: 'success',
+     					title: 'Successfully Deleted',
+     					showConfirmButton: false,
+     					timer: 1500
+     				})
+     			}else{
+     				Swal.fire({
+     					position: 'top-end',
+     					icon: 'error',
+     					title: 'Something Went Wrong',
+     					showConfirmButton: false,
+     					timer: 1500
+     				})
+     			}
+
+
+
+
+
+
+
+
+     		},
+     		error:function(error){
+
+     		}
+
+     	});
+
+     	
+     }
+
+
+     /////======////////
+
+     ////====MyCart=====////
+
+      function my_cart(){
+
+     	$.ajax({
+     		type: "GET",
+     		dataType: 'json',
+     		url: "my_cart/data/read",
+
+     		success:function(data){
+     			console.log(data);
+     			var output="";
+     			$.each(data.cartContent,function(index,value){
+
+     				output +=`<tr>
+     				<td class="col-md-2"><img src="${value.options.image}" alt="imga"></td>
+     				<td class="col-md-2">
+     				<div class="product-name"><a href="#">${value.name}</a></div>
+
+     				<div class="price">
+     				$ ${value.price}
+
+
+     				</div>
+     				</td>
+     				<td class="col-md-2">${value.options.color}</td>
+     				<td class="col-md-2">${value.options.size==null? `Product Size`: `${value.options.size}` }</td>
+     				<td class="col-md-2">$ ${value.price} * ${value.qty} = ${value.subtotal}</td>
+     				<td class="col-md-2">
+     				   ${value.qty==1? `<button type="submit" class="btn btn-success btn-sm" id="${value.rowId}" onclick="decrementCartItem(this.id)" disabled>-</button>` : `<button type="submit" class="btn btn-success btn-sm" id="${value.rowId}" onclick="decrementCartItem(this.id)" >-</button>` }
+                        
+                        <input value="${value.qty}"    style="width:30px"  disabled>
+                        <button class="btn btn-danger btn-sm " id="${value.rowId}" onclick="incrementCartItem(this.id)">+</button>
+
+     				</td>
+     				<td class="col-md-1 close-btn">
+     				<a href="#" class="" id="${value.rowId}" onclick="miniCartRemoveItem(this.id)"><i class="fa fa-times"></i></a>
+     				</td>
+     				</tr>`;
+
+
+     			});
+
+     			$('#my_cart').html(output);
+
+
+
+     		},
+     		error:function(error){
+
+     		}
+
+     	});
+
+     }
+     my_cart();
+
+
+
+
+
+     ////======///////
+    ///=====Increment and Decrement Cart Item =======//////
+
+    function decrementCartItem(rowId){
+    	$.ajax({
+     		type: "GET",
+     		dataType: 'json',
+     		url: "cart/item/decrement/"+rowId,
+
+     		success:function(data){
+             my_cart();
+             miniCart();
+           
+
+     		},
+     		error:function(error){
+
+     		}
+
+     	});
+    }
+
+    function incrementCartItem(rowId){
+    	$.ajax({
+     		type: "GET",
+     		dataType: 'json',
+     		url: "cart/item/increment/"+rowId,
+
+     		success:function(data){
+             my_cart();
+             miniCart();
+
+           
+
+     		},
+     		error:function(error){
+
+     		}
+
+     	});
+    }
+
+
+    ///===========//////
+
+     /////=====addToWishlist======////
+
+     function addToWishList(product_id){
+
+     	$.ajax({
+     		type: "GET",
+     		dataType: 'json',
+     		url: "wishlist/data/store/"+product_id,
+
+     		success:function(data){
+
+     			if(data.msg=='success'){
+     				Swal.fire({
+     					position: 'top-end',
+     					icon: 'success',
+     					title: 'Successfully Added',
+     					showConfirmButton: false,
+     					timer: 1500
+     				})
+     			}else if(data.msg=='already has'){
+     				Swal.fire({
+     					position: 'top-end',
+     					icon: 'error',
+     					title: 'Already Added',
+     					showConfirmButton: false,
+     					timer: 1500
+     				})
+
+     			}
+     			else{
+     				Swal.fire({
+     					position: 'top-end',
+     					icon: 'error',
+     					title: 'Please Login First',
+     					showConfirmButton: false,
+     					timer: 1500
+     				})
+     			}
+
+
+
+     		},
+     		error:function(error){
+
+     		}
+
+     	});
+
+     }
+
+
+     //////========//////
+
+     //////===show wishlist====/////
+     
+     function wishlist(){
+
+     	$.ajax({
+     		type: "GET",
+     		dataType: 'json',
+     		url: "wishlist/data/read",
+
+     		success:function(data){
+     			var output="";
+     			$.each(data.wishlist,function(index,value){
+
+     				output +=`<tr>
+     				<td class="col-md-2"><img src="${value.product.product_thumbnail}" alt="imga"></td>
+     				<td class="col-md-7">
+     				<div class="product-name"><a href="#">${value.product.product_name_en}</a></div>
+
+     				<div class="price">
+     				${value.product.discount_price == null ? `$ ${value.product.selling_price}`: `$ ${value.product.discount_price} <span>$ ${value.product.selling_price}</span>`  }
+
+
+     				</div>
+     				</td>
+     				<td class="col-md-2">
+     				<button class="btn-upper btn btn-primary" data-toggle="modal" data-target="#productModal" type="button" id="${value.product.id}" onclick="getID(this.id)"> Add To Cart
+
+     				</button>
+     				
+     				</td>
+     				<td class="col-md-1 close-btn">
+     				<a href="#" class="" id="${value.id}" onclick="removeWishlist(this.id)"><i class="fa fa-times"></i></a>
+     				</td>
+     				</tr>`;
+
+
+     			});
+
+     			$('#wishlist').html(output);
+
+
+
+     		},
+     		error:function(error){
+
+     		}
+
+     	});
+
+     }
+     wishlist();
+
+     //===//
+     
+     ////=====RemoveWishlist======/////
+
+    function removeWishlist(id){
+
+    	$.ajax({
+     		type: "GET",
+     		dataType: 'json',
+     		url: "wishlist/data/remove/"+id,
+
+     		success:function(data){
+             wishlist();
+             const Toast = Swal.mixin({
+             	toast:true,
+             	position: 'top-end',
+             	showConfirmButton:false,
+             	timer:3000
+             })
+
+             if($.isEmptyObject(data.error)){
+             	Toast.fire({
+                    type:'success',
+                    title:data.success
+             		})
+             	}else{
+             		Toast.fire({
+                    type:'error',
+                    title:data.error
+             		})
+             	}
+             
+     			
+     		},
+     		error:function(error){
+
+     		}
+
+     	});
+
+     	
+     }
+
+    
+     
+
+
+     ////======////
+
+
+ </script>
 
 
 
 
 </body>
 
-</html>
+</html> 
