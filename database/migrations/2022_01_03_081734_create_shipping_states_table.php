@@ -17,7 +17,7 @@ class CreateShippingStatesTable extends Migration
             $table->increments('id');
             $table->unsignedBigInteger('shipping_division_id');
             $table->unsignedBigInteger('shipping_district_id');
-            $table->unsignedBigInteger('state_name');
+            $table->string('state_name');
             $table->timestamps();
         });
     }

@@ -123,7 +123,14 @@ Route::group(['prefix' => 'admin','middleware' =>['auth','admin'],'namespace' =>
      Route::get('edit_district/{id}',[ShippingAreaController::class,'edit_district'])->name('edit.district');
      Route::post('update_district',[ShippingAreaController::class,'update_district'])->name('update.district');
     Route::get('delete_district/{id}',[ShippingAreaController::class,'delete_district'])->name('delete.district');
+
+
     Route::get('state',[ShippingAreaController::class,'add_state'])->name('state');
+    Route::get('ajax/request/get_district/{id}',[ShippingAreaController::class,'ajax_get_district']);
+    Route::post('add/state',[ShippingAreaController::class,'store_state'])->name('add.state');
+     Route::get('edit_state/{id}',[ShippingAreaController::class,'edit_state'])->name('edit.state');
+     Route::post('update_state',[ShippingAreaController::class,'update_state'])->name('update.state');
+    Route::get('delete_state/{id}',[ShippingAreaController::class,'delete_state'])->name('delete.state');
 });
 
 //============User============//
