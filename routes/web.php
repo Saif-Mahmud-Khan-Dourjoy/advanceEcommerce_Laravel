@@ -168,6 +168,17 @@ Route::get('wishlist/data/store/{id}',[WishlistController::class,'addToWishlist'
 Route::get('wishlist',[WishlistController::class,'index'])->name('wishlist'); 
 Route::get('wishlist/data/read',[WishlistController::class,'data_read']);
 Route::get('wishlist/data/remove/{id}',[WishlistController::class,'data_remove']);
+//===Coupon===///
+Route::post('apply/coupon',[WishlistController::class,'apply_coupon']);
+Route::get('calculation/coupon',[WishlistController::class,'calculation_coupon']);
+Route::get('coupon/remove',[WishlistController::class,'coupon_remove']);
+
+//===Checkout===//
+
+Route::get('user/checkout',[CartController::class,'user_checkout'])->name('user.checkout');
+
+
+//===//
 
 
 
