@@ -27,7 +27,7 @@
 	<link rel="stylesheet" href="{{asset('frontend')}}/assets/css/bootstrap-select.min.css">
 	
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+   
 
 
 
@@ -39,7 +39,25 @@
 	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,800' rel='stylesheet' type='text/css'>
 	<link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
 
+   <script src="https://js.stripe.com/v2/"></script>
 
+   <style type="text/css">
+         .panel-title {
+         display: inline;
+         font-weight: bold;
+         }
+         .display-table {
+         display: table;
+         }
+         .display-tr {
+         display: table-row;
+         }
+         .display-td {
+         display: table-cell;
+         vertical-align: middle;
+         width: 61%;
+         }
+      </style>
 </head>
 <body class="cnt-home">
 	
@@ -171,11 +189,11 @@
 											<div class="basket">
 												<i class="glyphicon glyphicon-shopping-cart"></i>
 											</div>
-											<div class="basket-item-count"><span class="count miniCartCount"></span></div>
+											<div class="basket-item-count"><span class="count miniCartCount">{{Cart::count()}}</span></div>
 											<div class="total-price-basket">
 												<span class="lbl">cart -</span>
 												<span class="total-price">
-													<span class="sign">$</span><span class="value mini_cart_total">600.00</span>
+													<span class="sign">$</span><span class="value mini_cart_total">{{Cart::total()}}</span>
 												</span>
 											</div>
 
@@ -594,8 +612,15 @@
 		<script src="{{asset('frontend')}}/assets/js/bootstrap-select.min.js"></script>
 		<script src="{{asset('frontend')}}/assets/js/wow.min.js"></script>
 		<script src="{{asset('frontend')}}/assets/js/scripts.js"></script>
+
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.all.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.79/jquery.form-validator.min.js" integrity="sha512-7+hQkXGIswtBWoGbyajZqqrC8sa3OYW+gJw5FzW/XzU/lq6kScphPSlj4AyJb91MjPkQc+mPQ3bZ90c/dcUO5w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<script type="text/javascript">
+			$.validate({
+				lang:'en'
+			});
+		</script>
 		<script>
 			@if(Session::has('message'))
 			var type = "{{ Session::get('alert-type', 'info') }}";
@@ -1318,6 +1343,9 @@
      	});
      }
      ////===////
+
+
+
  </script>
 
 

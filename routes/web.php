@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ShippingAreaController;
 use App\Http\Controllers\Admin\SliderController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\Frontend\IndexController;
 use App\Http\Controllers\Frontend\LanguageController;
 use App\Http\Controllers\User\CartController;
@@ -141,6 +142,14 @@ Route::group(['prefix' => 'user','middleware' =>['auth','user'],'namespace' => '
     Route::post('image/update',[UserController::class,'image_update'])->name('user.image.update');
     Route::get('password/update/view',[UserController::class,'password_update_view'])->name('password.change.view');
     Route::post('password/update',[UserController::class,'password_update'])->name('user.password.update');
+
+    ////====Checkout====////
+    
+    Route::get('district-get/ajax/{id}',[CheckoutController::class,'get_district_ajax']);
+    Route::get('state-get/ajax/{id}',[CheckoutController::class,'get_state_ajax']);
+    Route::post('checkout/store',[CheckoutController::class,'checkout_store'])->name('user.checkout.store');
+
+    Route::post('stripe', [CheckoutController::class, 'stripePost'])->name('stripe.post');
 });
 
 
@@ -176,6 +185,7 @@ Route::get('coupon/remove',[WishlistController::class,'coupon_remove']);
 //===Checkout===//
 
 Route::get('user/checkout',[CartController::class,'user_checkout'])->name('user.checkout');
+
 
 
 //===//
