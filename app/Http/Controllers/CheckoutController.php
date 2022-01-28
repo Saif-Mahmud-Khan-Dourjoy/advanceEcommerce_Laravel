@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\ShippingDistrict;
 use App\Models\ShippingState;
+use Carbon\Carbon;
 use Cart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Session;
 use Stripe;
-use Illuminate\Support\Facades\Auth;
 
 class CheckoutController extends Controller
 {
@@ -58,6 +60,8 @@ class CheckoutController extends Controller
         }else{
             $total_amount=Cart::total();
         }
+
+        $order_number=mt_rand(1,999999);
      
         Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
         $charge=Stripe\Charge::create ([
@@ -65,10 +69,10 @@ class CheckoutController extends Controller
                 "currency" => "usd",
                 "source" => $request->stripeToken,
                 "description" => "Payment From Dourjoy",
-                "metadata" => ['order_id' => '6735'],
+                "metadata" => ['order_number' =>$order_number],
         ]);
 
-        dd($charge);
+       
 
         $order_id=Order::insertGetId([
          
@@ -85,16 +89,52 @@ class CheckoutController extends Controller
           'transaction_id'=>$charge->balance_transaction,
           'currency'=>$charge->currency,
           'amount'=>$total_amount,
-          'transaction_id'=>$charge->balance_transaction,
+          'order_number'=>$charge->metadata->order_number,
+          'invoice_no'=>'DJ_'.mt_rand(10000000,99999999),
+          'order_date'=>Carbon::now()->format('d F Y'),
+          'order_month'=>Carbon::now()->format('F'),
+          'order_year'=>Carbon::now()->format('Y'),
+          'status'=>'pending',
+          'created_at'=>Carbon::now(),
           
 
 
 
         ]);
+
+        $cartContent=Cart::content();
+
+        foreach($cartContent as $item){
+            OrderItem::insert([
+
+                'order_id'=>$order_id,
+                'product_id'=>$item->id,
+                'color'=>$item->options->color,
+                'size'=>$item->options->size,
+                'price'=>$item->price,
+                'qty'=>$item->qty,
+                'created_at'=>Carbon::now(),
+
+
+            ]);
+
+          
+        }
+
+        if(Session::has('coupon')){
+            Session::forget('coupon');
+          }  
+
+          Cart::destroy();
+
+
+        $notification = array(
+            'message' => 'Order Successfully Placed!',
+            'alert-type' => 'success'
+        );
+        return redirect()->to('/')->with($notification);
         
    
-        // Session::flash('success', 'Payment successful!');
-           
-        // return back();
+        
     }
 }
